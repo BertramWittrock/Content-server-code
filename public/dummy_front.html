@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Reaktionsdemo</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+
+    <script src="http://localhost:3000/socket.io/socket.io.js"></script>
+    <script>
+      var socket = io();
+
+      // Funktion til at sende reaktioner
+      function sendReaction(reactionType, noteId) {
+        var reactionTypeStr = 'reaction' + reactionType;
+        socket.emit('postReaction', { noteId: noteId, reactionType: reactionTypeStr });
+      }
+
+      // function onNoteClick(noteId) {
+      //   var noteElement = document.getElementById('note-' + noteId);
+
+      //   // Gør den valgte note større og fremhæver den
+      //   noteElement.classList.add('active-note');
+
+      //   // Klik uden for noten for at vende tilbage til normal størrelse
+      //   window.onclick = function(event) {
+      //       if (event.target == noteElement) {
+      //           return;
+      //       }
+      //       noteElement.classList.remove('active-note');
+      //   };
+      // } 
+      function onNoteClick(noteId) {
+        // Fjerner aktiv klasse fra alle noter
+        document.querySelectorAll('.sticky-note').forEach(note => note.classList.remove('active-note'));
+
+        // Gør den valgte note større og fremhæver den
+        var noteElement = document.getElementById('note-' + noteId);
+        noteElement.classList.add('active-note');
+
+                // Tilføjer en event listener til window for at håndtere klik uden for den aktive note
+        window.addEventListener('click', function(event) {
+          if (!noteElement.contains(event.target)) {
+            noteElement.classList.remove('active-note');
+          }
+        });
+      }
+            
+
+      // Hent og vis sticky notes, når siden indlæses
+      window.onload = function() {
+        fetch('/sticky-notes')
+          .then(response => response.text())
+          .then(html => {
+            document.getElementById('notesContainer').innerHTML = html;
+          })
+          .catch(error => console.error('Fejl ved hentning af sticky notes:', error));
+      };
+
+      // Lyt til opdateringer af reaktioner
+      socket.on('updateReactions', function(data) {
+        var noteElement = document.getElementById('note-' + data.id);
+        if (noteElement) {
+            noteElement.querySelector('.note-reactions').innerHTML = `
+                <button onclick="sendReaction(1, ${data.id})"> <3 (${data.reaction1})</button>
+                <button onclick="sendReaction(2, ${data.id})"> :) (${data.reaction2})</button>
+                <button onclick="sendReaction(3, ${data.id})"> :| (${data.reaction3})</button>
+                <button onclick="sendReaction(4, ${data.id})"> :( (${data.reaction4})</button>
+            `;
+        }
+        // Opdater UI med den nye reaktion
+
+
+      });
+    </script>
+</head>
+<body>
+    <div id="overlay" class="overlay"></div>
+<!-- Resten af din HTML her -->
+
+    <div id="notesContainer"></div> <!-- Container til sticky notes -->
+</body>
+</html>
