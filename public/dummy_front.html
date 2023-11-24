@@ -104,13 +104,19 @@
         function adjustNoteHeight(noteId) {
           var noteElement = document.getElementById('note-' + noteId);
           if (noteElement) {
+              var textElements = noteElement.querySelectorAll('.note-text');
+              var totalTextHeight = Array.from(textElements).reduce((total, elem) => total + elem.offsetHeight, 0) +50;
+
               var commentsContainer = noteElement.querySelector('.comments-container');
               var commentInputHeight = document.getElementById('comment-input-' + noteId).offsetHeight;
-              var newHeight = commentsContainer.offsetHeight + commentInputHeight + 100; // 100 er et ekstra buffer for at dække andre elementer
+
+              var newHeight = totalTextHeight + commentsContainer.offsetHeight + commentInputHeight + 100; // 100 er et ekstra buffer
               newHeight = Math.max(newHeight, 250); // Sørg for at minimumshøjden er 250px
+
               noteElement.style.height = newHeight + 'px';
           }
         }
+
 
         // Lyt til opdateringer af reaktioner
         socket.on('updateReactions', function(data) {

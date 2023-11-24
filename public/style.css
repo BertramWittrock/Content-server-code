@@ -1,13 +1,18 @@
 /* style.css */
 
+
 body {
     font-family: Arial, sans-serif;
+    overflow-y: auto; /* Tillader vertikal scrolling */
+
 }
 
 #notesContainer {
     display: flex;
     flex-wrap: wrap;
     justify-content: center; /* Centrerer notes i containeren */
+    overflow-y: auto; /* Tillader vertikal scrolling */
+
 
 }
 
@@ -15,12 +20,16 @@ body {
 
 
 .active-note {
+    transform: translate(-70%, -50%) scale(1.5) !important;
+
+    max-height: 80vh !important; /* Eksempel: maksimal højde på 80% af vinduets højde */
+    overflow-y: auto !important; /* Tillader scrolling inden i noten */
+
     min-height: 250px; /* Din nuværende minimumshøjde */
 
     position: fixed !important;
     top: 50% !important;
     left: 50% !important;
-    transform: translate(-50%, -50%) scale(2) !important;
     z-index: 10 !important;
     background-color: #ffffcc !important;
     box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.4) !important;
@@ -67,4 +76,10 @@ body {
 
 .note-reactions button:hover {
     background-color: #1e4f83;
+}
+
+@media (max-width: 600px) {
+    .sticky-note {
+        max-height: 90vh;
+    }
 }
