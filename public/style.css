@@ -15,6 +15,8 @@ body {
 
 
 .active-note {
+    min-height: 250px; /* Din nuværende minimumshøjde */
+
     position: fixed !important;
     top: 50% !important;
     left: 50% !important;
