@@ -14,46 +14,93 @@
         socket.emit('postReaction', { noteId: noteId, reactionType: reactionTypeStr });
       }
 
-      // function onNoteClick(noteId) {
-      //   var noteElement = document.getElementById('note-' + noteId);
-
-      //   // Gør den valgte note større og fremhæver den
-      //   noteElement.classList.add('active-note');
-
-      //   // Klik uden for noten for at vende tilbage til normal størrelse
-      //   window.onclick = function(event) {
-      //       if (event.target == noteElement) {
-      //           return;
-      //       }
-      //       noteElement.classList.remove('active-note');
-      //   };
-      // } 
       function onNoteClick(noteId) {
-        // Fjerner aktiv klasse fra alle noter
+    // Fjerner aktiv klasse fra alle noter
         document.querySelectorAll('.sticky-note').forEach(note => note.classList.remove('active-note'));
 
         // Gør den valgte note større og fremhæver den
         var noteElement = document.getElementById('note-' + noteId);
         noteElement.classList.add('active-note');
 
-                // Tilføjer en event listener til window for at håndtere klik uden for den aktive note
+        // Håndterer klik uden for den aktive note
         window.addEventListener('click', function(event) {
-          if (!noteElement.contains(event.target)) {
-            noteElement.classList.remove('active-note');
-          }
+            if (!noteElement.contains(event.target)) {
+                noteElement.classList.remove('active-note');
+            }
         });
+
+        // Henter og viser kommentarer for den aktuelle note
+        // fetch(`/comments/${noteId}`)
+        //     .then(response => response.json())
+        //     .then(comments => {
+        //         var commentsContainer = noteElement.querySelector('.comments-container');
+        //         if (commentsContainer) {
+        //             commentsContainer.innerHTML = ''; // Ryd eksisterende kommentarer først
+        //             comments.forEach(comment => {
+        //                 var commentElement = document.createElement('div');
+        //                 commentElement.classList.add('comment');
+        //                 commentElement.innerHTML = `
+        //                     <strong>${comment.username}</strong>: ${comment.comment}
+        //                     <br/>
+        //                     <small>${comment.timestamp}</small>
+        //                 `;
+        //                 commentsContainer.appendChild(commentElement);
+        //             });
+        //         }
+        //     })
+        //     .catch(error => console.error('Fejl ved hentning af kommentarer:', error));
+      }
+
+      function sendComment(noteId) {
+          var commentInput = document.getElementById('comment-input-' + noteId);
+          var comment = commentInput.value.trim();
+          var username = 'Bruger'; // Sæt det til den aktuelle brugers navn
+
+          if (comment) {
+              // Brug Socket.IO til at sende kommentaren
+              socket.emit('postComment', { noteId, username, comment });
+              commentInput.value = ''; // Ryd inputfeltet
+          }
       }
             
-
-      // Hent og vis sticky notes, når siden indlæses
       window.onload = function() {
-        fetch('/sticky-notes')
-          .then(response => response.text())
-          .then(html => {
-            document.getElementById('notesContainer').innerHTML = html;
-          })
-          .catch(error => console.error('Fejl ved hentning af sticky notes:', error));
+          fetch('/sticky-notes')
+              .then(response => response.text())
+              .then(html => {
+                  document.getElementById('notesContainer').innerHTML = html;
+
+                  // Hent kommentarer for hver note
+                  document.querySelectorAll('.sticky-note').forEach(note => {
+                      const noteId = note.getAttribute('id').split('-')[1];
+                      fetchCommentsForNote(noteId);
+                  });
+              })
+              .catch(error => console.error('Fejl ved hentning af sticky notes:', error));
       };
+
+      // Funktion til at hente og vise kommentarer for en bestemt note
+      function fetchCommentsForNote(noteId) {
+          fetch(`/comments/${noteId}`)
+              .then(response => response.json())
+              .then(comments => {
+                  var noteElement = document.getElementById('note-' + noteId);
+                  var commentsContainer = noteElement.querySelector('.comments-container');
+                  if (commentsContainer) {
+                      commentsContainer.innerHTML = ''; // Ryd eksisterende kommentarer først
+                      comments.forEach(comment => {
+                          var commentElement = document.createElement('div');
+                          commentElement.classList.add('comment');
+                          commentElement.innerHTML = `
+                              <strong>${comment.username}</strong>: ${comment.comment}
+                              <br/>
+                              <small>${comment.timestamp}</small>
+                          `;
+                          commentsContainer.appendChild(commentElement);
+                      });
+                  }
+              })
+              .catch(error => console.error('Fejl ved hentning af kommentarer:', error));
+      }
 
       // Lyt til opdateringer af reaktioner
       socket.on('updateReactions', function(data) {
@@ -67,8 +114,33 @@
             `;
         }
         // Opdater UI med den nye reaktion
+      
 
+      });
 
+      socket.on('newComment', function(comment) {
+        console.log("hmmm")
+        // Find den note, som kommentaren hører til
+        var noteElement = document.getElementById('note-' + comment.noteId);
+
+        if (noteElement) {
+            // Antager, at der er et element til kommentarer inden i hver note
+            var commentsContainer = noteElement.querySelector('.comments-container');
+
+            if (commentsContainer) {
+                // Opret et nyt element til at vise kommentaren
+                var commentElement = document.createElement('div');
+                commentElement.classList.add('comment');
+                commentElement.innerHTML = `
+                    <strong>${comment.username}</strong>: ${comment.comment}
+                    <br/>
+                    <small>${comment.timestamp}</small>
+                `;
+
+                // Tilføj den nye kommentar til kommentarcontaineren
+                commentsContainer.appendChild(commentElement);
+            }
+         }
       });
     </script>
 </head>
