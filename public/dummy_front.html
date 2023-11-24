@@ -21,7 +21,7 @@
               note.classList.remove('active-note');
               const noteId = note.getAttribute('id').split('-')[1];
               fetchCommentsForNote(noteId); // Opdater kommentarer for hver note
-              adjustNoteHeight(noteId); // Juster højden efter at have vist alle kommentarer
+              // adjustNoteHeight(noteId); // Juster højden efter at have vist alle kommentarer
           });
 
           // Gør den valgte note større og fremhæver den
@@ -29,7 +29,7 @@
           noteElement.classList.add('active-note');
 
           fetchCommentsForNote(noteId, true);
-          adjustNoteHeight(noteId); // Juster højden efter at have vist alle kommentarer
+          // adjustNoteHeight(noteId); // Juster højden efter at have vist alle kommentarer
 
           // Håndterer klik uden for den aktive note
           window.addEventListener('click', function(event) {
