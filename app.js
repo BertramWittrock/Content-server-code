@@ -121,12 +121,11 @@ app.get('/comments/:noteId', async (req, res) => {
   const noteId = req.params.noteId;
   try {
     const comments = await db.all('SELECT * FROM comments WHERE note_id = ?', [noteId]);
-    //console.log(comments)
+    
     const decryptedComments = comments.map(comment => ({
       ...comment,
       comment: decrypt(comment.comment, secretKey)
     }));
-    console.log(comments.comment)
     
     console.log(decryptedComments);
     res.status(200).send(decryptedComments);
