@@ -51,24 +51,33 @@ open({
   `);
 
   //Kryptering af password
-  function encrypt(text, secretKey) {
-    const iv = crypto.randomBytes(16);
-    const cipher = crypto.createCipheriv('aes-256-cbc', Buffer.from(secretKey), iv);
-    let encrypted = cipher.update(text);
-    encrypted = Buffer.concat([encrypted, cipher.final()]);
-    return iv.toString('hex') + ':' + encrypted.toString('hex');
+  function encrypt(text) {
+    const iv = crypto.randomBytes(16); // Initialiseringsvektor
+    const key = Buffer.from(secretKey, 'hex'); // Konverterer nøglen til en buffer
+    const cipher = crypto.createCipheriv('aes-256-cbc', key, iv);
+  
+    let encrypted = cipher.update(text, 'utf8', 'hex');
+    encrypted += cipher.final('hex');
+    return iv.toString('hex') + ':' + encrypted;
   }
 
   //Dekryptering af password
   function decrypt(text, secretKey) {
-    let textParts = text.split(':');
-    let iv = Buffer.from(textParts.shift(), 'hex');
-    let encryptedText = Buffer.from(textParts.join(':'), 'hex');
-    let decipher = crypto.createDecipheriv('aes-256-cbc', Buffer.from(secretKey), iv);
-    let decrypted = decipher.update(encryptedText);
-    decrypted = Buffer.concat([decrypted, decipher.final()]);
-    return decrypted.toString();
+    try {
+      let textParts = text.split(':');
+      let iv = Buffer.from(textParts.shift(), 'hex');
+      let encryptedText = Buffer.from(textParts.join(':'), 'hex');
+      let key = Buffer.from(secretKey, 'hex'); // Sikrer, at nøglen er en Buffer
+      let decipher = crypto.createDecipheriv('aes-256-cbc', key, iv);
+      let decrypted = decipher.update(encryptedText);
+      decrypted = Buffer.concat([decrypted, decipher.final()]);
+      return decrypted.toString();
+    } catch (error) {
+      console.error('Dekrypteringsfejl:', error);
+      return text;
+    }
   }
+  
 
 
   // POST Endpoint til at Oprette en Sticky Note
@@ -97,9 +106,10 @@ open({
   // POST Endpoint til at oprette en kommentar
 app.post('/comments', async (req, res) => {
   const { noteId, username, comment } = req.body;
+  const encryptedComment = encrypt(comment, secretKey);
   const timestamp = new Date().toISOString();
   try {
-    await db.run('INSERT INTO comments (note_id, username, comment, timestamp) VALUES (?, ?, ?, ?)', [noteId, username, comment, timestamp]);
+    await db.run('INSERT INTO comments (note_id, username, comment, timestamp) VALUES (?, ?, ?, ?)', [noteId, username, encryptedComment, timestamp]);
     res.status(201).send({ message: 'Kommentar oprettet!' });
   } catch (error) {
     res.status(500).send({ error: error.message });
@@ -111,7 +121,15 @@ app.get('/comments/:noteId', async (req, res) => {
   const noteId = req.params.noteId;
   try {
     const comments = await db.all('SELECT * FROM comments WHERE note_id = ?', [noteId]);
-    res.status(200).send(comments);
+    //console.log(comments)
+    const decryptedComments = comments.map(comment => ({
+      ...comment,
+      comment: decrypt(comment.comment, secretKey)
+    }));
+    console.log(comments.comment)
+    
+    console.log(decryptedComments);
+    res.status(200).send(decryptedComments);
   } catch (error) {
     res.status(500).send({ error: error.message });
   }
