@@ -4,6 +4,9 @@ const http = require('http');
 const { Server } = require('socket.io');
 const { open } = require('sqlite');
 const { generateNoteHTML } = require('./helpers'); // Importer funktionen
+const crypto = require('crypto');
+const config = require('./config');
+const secretKey = config.secretKey;
 
 const app = express();
 const server = http.createServer(app);
@@ -46,6 +49,27 @@ open({
     FOREIGN KEY(note_id) REFERENCES sticky_notes(id)
   )
   `);
+
+  //Kryptering af password
+  function encrypt(text, secretKey) {
+    const iv = crypto.randomBytes(16);
+    const cipher = crypto.createCipheriv('aes-256-cbc', Buffer.from(secretKey), iv);
+    let encrypted = cipher.update(text);
+    encrypted = Buffer.concat([encrypted, cipher.final()]);
+    return iv.toString('hex') + ':' + encrypted.toString('hex');
+  }
+
+  //Dekryptering af password
+  function decrypt(text, secretKey) {
+    let textParts = text.split(':');
+    let iv = Buffer.from(textParts.shift(), 'hex');
+    let encryptedText = Buffer.from(textParts.join(':'), 'hex');
+    let decipher = crypto.createDecipheriv('aes-256-cbc', Buffer.from(secretKey), iv);
+    let decrypted = decipher.update(encryptedText);
+    decrypted = Buffer.concat([decrypted, decipher.final()]);
+    return decrypted.toString();
+  }
+
 
   // POST Endpoint til at Oprette en Sticky Note
   app.post('/sticky-notes', async (req, res) => {
