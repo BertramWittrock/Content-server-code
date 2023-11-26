@@ -163,6 +163,8 @@ app.get('/comments/:noteId', async (req, res) => {
       try {
         // Udpak data fra den modtagne besked
         const { noteId, username, comment } = data;
+        const encryptedComment = encrypt(comment, secretKey);
+        console.log(encryptedComment);
   
         // Valider data (her kunne du tilføje yderligere validering efter behov)
         if (!noteId || !username || !comment) {
@@ -172,11 +174,11 @@ app.get('/comments/:noteId', async (req, res) => {
         const timestamp = new Date().toISOString();
   
         // Indsæt kommentar i databasen
-        const result = await db.run('INSERT INTO comments (note_id, username, comment, timestamp) VALUES (?, ?, ?, ?)', [noteId, username, comment, timestamp]);
+        const result = await db.run('INSERT INTO comments (note_id, username, comment, timestamp) VALUES (?, ?, ?, ?)', [noteId, username, encryptedComment, timestamp]);
   
         // Hvis indsættelse lykkes, send en opdatering til alle klienter
         if (result && result.lastID) {
-          const newComment = { id: result.lastID, noteId, username, comment, timestamp };
+          const newComment = { id: result.lastID, noteId, username, encryptedComment, timestamp };
           
           // Udsend opdateringen
           io.emit('newComment', newComment);
