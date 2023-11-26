@@ -163,6 +163,8 @@ app.get('/comments/:noteId', async (req, res) => {
       try {
         // Udpak data fra den modtagne besked
         const { noteId, username, comment } = data;
+        const hashedComment = encrypt(comment, secretKey);
+        console.log(hashedComment);
   
         // Valider data (her kunne du tilføje yderligere validering efter behov)
         if (!noteId || !username || !comment) {
@@ -176,7 +178,7 @@ app.get('/comments/:noteId', async (req, res) => {
   
         // Hvis indsættelse lykkes, send en opdatering til alle klienter
         if (result && result.lastID) {
-          const newComment = { id: result.lastID, noteId, username, comment, timestamp };
+          const newComment = { id: result.lastID, noteId, username, hashedComment, timestamp };
           
           // Udsend opdateringen
           io.emit('newComment', newComment);
