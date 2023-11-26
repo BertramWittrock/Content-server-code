@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const notesController = require('../database/notes');
+const { generateNoteHTML } = require('../utils/helpers'); 
 
 // POST Endpoint til at oprette en Sticky Note
 router.post('/', async (req, res) => {
@@ -17,7 +18,11 @@ router.post('/', async (req, res) => {
 router.get('/', async (req, res) => {
   try {
     const notes = await notesController.getNotes();
-    res.status(200).json(notes);
+    
+    // Convert notes to HTML here
+    const notesHTML = notes.map(note => generateNoteHTML(note)).join('');
+    
+    res.status(200).send(notesHTML);
   } catch (error) {
     res.status(500).send({ error: error.message });
   }
