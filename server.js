@@ -7,7 +7,7 @@ createSocketServer(server);
 
 const port = 3000;
 server.listen(port, () => {
-
+  console.log(app)
   console.log(`Server kører på http://localhost:${port}`);
 });
 
