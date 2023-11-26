@@ -1,0 +1,85 @@
+/* style.css */
+
+
+body {
+    font-family: Arial, sans-serif;
+    overflow-y: auto; /* Tillader vertikal scrolling */
+
+}
+
+#notesContainer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center; /* Centrerer notes i containeren */
+
+
+}
+
+/* style.css */
+
+
+.active-note {
+    transform: translate(-70%, -50%) scale(1.5) !important;
+
+    max-height: 80vh !important; /* Eksempel: maksimal højde på 80% af vinduets højde */
+    overflow-y: auto !important; /* Tillader scrolling inden i noten */
+
+    min-height: 250px; /* Din nuværende minimumshøjde */
+
+    overflow: scroll;
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    z-index: 10 !important;
+    background-color: #ffffcc !important;
+    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.4) !important;
+    padding: 15px !important;
+    margin: 0 !important;
+}
+
+.sticky-note {
+    position: relative; /* Gør det muligt at positionere knapperne absolut inden for noten */
+    width: 300px;
+    height: 250px;
+    margin: 10px;
+    padding: 10px;
+    background-color: #ffffcc;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.sticky-note h3 {
+    margin: 0;
+    padding: 0;
+}
+
+.note-reactions {
+    position: absolute;
+    bottom: 10px;
+    left: 20px;
+    right: 20px; /* Tilføjet for at styre bredden */
+    display: flex;
+    justify-content: space-between;
+}
+
+.note-reactions button {
+    cursor: pointer;
+    padding: 5px 10px;
+    background-color: #d9ff00;
+    color: #333;
+    border: none;
+    border-radius: 3px;
+    transition: background-color 0.3s ease; /* Blød overgang for hover-effekt */
+    box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2); /* Tilføj skygge for dybde */
+}
+
+.note-reactions button:hover {
+    background-color: #1e4f83;
+}
+
+@media (max-width: 600px) {
+    .sticky-note {
+        max-height: 90vh;
+    }
+}
