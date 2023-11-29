@@ -1,13 +1,13 @@
 const express = require('express');
 const router = express.Router();
-const notesController = require('../database/notes');
+const { createNote, getNotes, updateReactions } = require('../database/notes'); // Opdateret import
 const { generateNoteHTML } = require('../utils/helpers'); 
 
 // POST Endpoint til at oprette en Sticky Note
 router.post('/', async (req, res) => {
   try {
     const { username, text } = req.body;
-    await notesController.createNote(username, text);
+    await createNote(username, text); // Opdateret til at bruge funktionen direkte
     res.status(201).send({ message: 'Sticky note oprettet!' });
   } catch (error) {
     res.status(500).send({ error: error.message });
@@ -17,7 +17,7 @@ router.post('/', async (req, res) => {
 // GET Endpoint til at hente Sticky Notes
 router.get('/', async (req, res) => {
   try {
-    const notes = await notesController.getNotes();
+    const notes = await getNotes(); // Opdateret til at bruge funktionen direkte
     
     // Convert notes to HTML here
     const notesHTML = notes.map(note => generateNoteHTML(note)).join('');
@@ -33,7 +33,7 @@ router.put('/:noteId/reactions', async (req, res) => {
   try {
     const noteId = req.params.noteId;
     const { reactionType } = req.body;
-    const updatedNote = await notesController.updateReactions(noteId, reactionType);
+    const updatedNote = await updateReactions(noteId, reactionType); // Opdateret til at bruge funktionen direkte
     res.status(200).json(updatedNote);
   } catch (error) {
     res.status(500).send({ error: error.message });

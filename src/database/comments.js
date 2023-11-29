@@ -10,7 +10,7 @@ async function getComments(noteId) {
     console.error('Fejl ved hentning af kommentarer:', error.message);
     throw error;
   } finally {
-    await db.close(); // Husk at lukke databasen
+    db.close(); // Husk at lukke databasen
   }
 }
 
@@ -24,7 +24,7 @@ async function addComment(noteId, username, comment, timestamp) {
     console.error('Fejl ved tilføjelse af kommentar:', error.message);
     return { success: false, error: error.message };
   } finally {
-    await db.close();
+    db.close();
   }
 }
 
