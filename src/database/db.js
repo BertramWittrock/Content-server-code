@@ -9,7 +9,7 @@ async function connectToDatabase() {
       driver: sqlite3.Database
     });
 
-    console.log('Database er forbundet!');
+    // console.log('Database er forbundet!');
 
     // Returner databaseobjektet til yderligere brug
     return db;

@@ -1,15 +1,14 @@
-// Importér nødvendige moduler eller biblioteker
 const { Server } = require('socket.io');
-const db = require('../database/db'); // Antager, at du har en separat db modul
-const encrypt = require('../utils/encryption').encrypt; // Tilpasset efter din struktur
+const { updateReactions } = require('../database/notes');
+const { addComment } = require('../database/comments');
+const { encrypt, decrypt } = require('../utils/encryption'); // Antager, at du har en separat encrypt modul
 const secretKey = process.env.SECRET_KEY
 
-// Funktion til at initialisere og konfigurere Socket.IO på serveren
 function createSocketServer(server) {
   const io = new Server(server);
 
   io.on('connection', (socket) => {
-    console.log('En bruger er forbundet');
+    console.log('En bruger er forbundet - socket');
 
     // Håndter 'postReaction' event
     socket.on('postReaction', async (data) => {
@@ -22,8 +21,7 @@ function createSocketServer(server) {
           throw new Error('Ugyldig reaktionstype');
         }
 
-        await db.run(`UPDATE sticky_notes SET ${reactionType} = ${reactionType} + 1 WHERE id = ?`, [noteId]);
-        const updatedNote = await db.get('SELECT * FROM sticky_notes WHERE id = ?', [noteId]);
+        const updatedNote = await updateReactions(noteId, reactionType);
         io.emit('updateReactions', updatedNote);
       } catch (error) {
         console.error('Fejl under håndtering af postReaction:', error);
@@ -34,17 +32,18 @@ function createSocketServer(server) {
     socket.on('postComment', async (data) => {
       try {
         const { noteId, username, comment } = data;
-        const encryptedComment = encrypt(comment, secretKey);
+        const encryptedComment = encrypt(comment);
 
         if (!noteId || !username || !comment) {
           throw new Error('Manglende data for kommentar');
         }
 
         const timestamp = new Date().toISOString();
-        const result = await db.run('INSERT INTO comments (note_id, username, comment, timestamp) VALUES (?, ?, ?, ?)', [noteId, username, encryptedComment, timestamp]);
+        const result = await addComment(noteId, username, encryptedComment, timestamp);
 
-        if (result && result.lastID) {
-          const newComment = { id: result.lastID, noteId, username, comment: encryptedComment, timestamp };
+        if (result.success) {
+          const newComment = { noteId, username, comment: encryptedComment, timestamp };
+          
           io.emit('newComment', newComment);
         }
       } catch (error) {
