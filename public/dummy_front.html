@@ -135,6 +135,7 @@
         });
 
         socket.on('newComment', function(comment) {
+            console.log("first comment")
         // Find den note, som kommentaren hører til
             var noteElement = document.getElementById('note-' + comment.noteId);
 

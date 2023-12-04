@@ -30,6 +30,7 @@ function createSocketServer(server) {
 
     // Håndter 'postComment' event
     socket.on('postComment', async (data) => {
+      console.log("modtaget kommentar")
       try {
         const { noteId, username, comment } = data;
         const encryptedComment = encrypt(comment);
@@ -42,8 +43,7 @@ function createSocketServer(server) {
         const result = await addComment(noteId, username, encryptedComment, timestamp);
 
         if (result.success) {
-          const newComment = { noteId, username, comment: encryptedComment, timestamp };
-          
+          const newComment = { noteId, username, comment: decrypt(encryptedComment), timestamp };
           io.emit('newComment', newComment);
         }
       } catch (error) {

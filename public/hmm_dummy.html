@@ -1,13 +1,17 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="da">
 <head>
+    <meta charset="UTF-8">
     <title>Reaktionsdemo</title>
     <link rel="stylesheet" type="text/css" href="style.css">
     <script src="http://localhost:3000/socket.io/socket.io.js"></script>
-    <script src="scripts.js"></script> <!-- Ekstern JavaScript-fil -->
 </head>
 <body>
-    <div id="overlay" class="overlay"></div>
-    <div id="notesContainer"></div> <!-- Container til sticky notes -->
+    <div id="notesContainer"> <!-- Container til sticky notes -->
+        <!-- Sticky notes vil blive indlæst her -->
+    </div>
+
+    <!-- Placer scripts.js i bunden af body for at sikre, at DOM-elementer er indlæst først -->
+    <script src="scripts.js"></script>
 </body>
 </html>

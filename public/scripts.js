@@ -1,39 +1,141 @@
-// scripts.js
+// Opretter forbindelse til Socket.IO-serveren
+const socket = io(); // Opretter forbindelse til din server
 
-document.addEventListener('DOMContentLoaded', () => {
-    const socket = io('http://localhost:3000');
 
-    // Resten af dine funktioner og event listeners her...
-    function sendReaction(reactionType, noteId) {
-        // Implementering af sendReaction...
-    }
-
-    function onNoteClick(noteId) {
-        // Implementering af onNoteClick...
-    }
-
-    function sendComment(noteId) {
-        // Implementering af sendComment...
-    }
-
-    function fetchCommentsForNote(noteId, showAll = false) {
-        // Implementering af fetchCommentsForNote...
-    }
-
-    function adjustNoteHeight(noteId) {
-        // Implementering af adjustNoteHeight...
-    }
-
-    socket.on('updateReactions', (data) => {
-        // Implementering af socket.on('updateReactions')...
+// Funktion til at fjerne aktiv klasse fra alle notes
+function removeActiveNotes() {
+    document.querySelectorAll('.sticky-note').forEach(note => {
+        note.classList.remove('active-note');
     });
+}
 
-    socket.on('newComment', (comment) => {
-        // Implementering af socket.on('newComment')...
-    });
+// Funktion til at gøre en note aktiv
+function onNoteClick(noteId) {
+    removeActiveNotes();
 
-    // Initialisering af applikationen
-    fetch('/sticky-notes')
-        // Resten af din kode her...
+    // Tilføj aktiv klasse til den klikkede note
+    const activeNote = document.getElementById(`note-${noteId}`);
+    if (activeNote) {
+        activeNote.classList.add('active-note');
+    }
+}
+
+// Event listener til hele dokumentet for at fjerne aktive notes
+document.addEventListener('click', (event) => {
+    if (!event.target.closest('.sticky-note')) {
+        removeActiveNotes();
+    }
 });
 
+// Opdatering af fetchAndDisplayNotes for at tilføje event listeners
+async function fetchAndDisplayNotes() {
+    try {
+        const response = await fetch('/sticky-notes'); // Angiv den korrekte sti til din GET endpoint
+        const notesHTML = await response.text();
+
+        // Opdater HTML indholdet i notesContainer
+        document.getElementById('notesContainer').innerHTML = notesHTML;
+        
+        // // Tilføj event listeners til hver note
+        // document.querySelectorAll('.sticky-note').forEach(note => {
+        //     const noteId = note.id.split('-')[1];
+        //     note.addEventListener('click', () => onNoteClick(noteId));
+
+        //     // Hent kommentarer for denne note
+        //     await fetchAndDisplayComments(noteId);
+        // });
+        // Hent og vis kommentarer for hver note
+        document.querySelectorAll('.sticky-note').forEach(async (note) => {
+            const noteId = note.id.split('-')[1];
+            note.addEventListener('click', () => onNoteClick(noteId));
+
+            // Hent kommentarer for denne note
+            await fetchAndDisplayComments(noteId);
+        });
+    } catch (error) {
+        console.error('Fejl ved indlæsning af notes:', error);
+    }
+}
+
+
+// Funktion til at hente og vise kommentarer for en specifik note
+async function fetchAndDisplayComments(noteId) {
+    try {
+        const commentsResponse = await fetch(`/comments/${noteId}`);
+        const comments = await commentsResponse.json();
+        const commentsContainer = document.getElementById(`comments-container-${noteId}`);
+
+        comments.forEach(comment => {
+            const commentHtml = `
+                <div class="comment">
+                    <span class="comment-username">${comment.username}</span>
+                    <span class="comment-timestamp">${new Date(comment.timestamp).toLocaleString()}</span>
+                    <p class="comment-text">${comment.comment}</p>
+                </div>
+            `;
+            commentsContainer.innerHTML += commentHtml;
+        });
+    } catch (error) {
+        console.error(`Fejl ved indlæsning af kommentarer for note ${noteId}:`, error);
+    }
+}
+
+// Send reaktion til serveren
+function sendReaction(reactionType, noteId) {
+    var reactionTypeStr = 'reaction' + reactionType;
+    socket.emit('postReaction', { noteId: noteId, reactionType: reactionTypeStr });
+}
+
+// Send kommentar til serveren
+function sendComment(noteId) {
+    const commentInput = document.getElementById(`comment-input-${noteId}`);
+    const comment = commentInput.value;
+    const username = 'BrugerNavn'; // Erstat med faktisk brugernavn
+
+    if (comment) {
+        console.log("commentsent")
+        socket.emit('postComment', { noteId, username, comment });
+        commentInput.value = '';
+    }
+}
+
+
+socket.on('updateReactions', updatedNote => {
+    // Antager at updatedNote objektet indeholder id og de opdaterede reaktioner
+    const noteElement = document.getElementById(`note-${updatedNote.id}`);
+
+    if (noteElement) {
+        // Opdater reaktionerne i note-elementet
+        noteElement.querySelector(`button[onclick="sendReaction(1, ${updatedNote.id})"]`).textContent = ` <3 (${updatedNote.reaction1})`;
+        noteElement.querySelector(`button[onclick="sendReaction(2, ${updatedNote.id})"]`).textContent = ` :) (${updatedNote.reaction2})`;
+        noteElement.querySelector(`button[onclick="sendReaction(3, ${updatedNote.id})"]`).textContent = ` :| (${updatedNote.reaction3})`;
+        noteElement.querySelector(`button[onclick="sendReaction(4, ${updatedNote.id})"]`).textContent = ` :( (${updatedNote.reaction4})`;
+    }
+});
+
+
+socket.on('newComment', newComment => {
+    // Find den rigtige note baseret på newComment.noteId
+    const noteElement = document.getElementById(`note-${newComment.noteId}`);
+    
+    if (noteElement) {
+        // Find kommentarcontaineren i denne note
+        const commentsContainer = noteElement.querySelector('.comments-container');
+
+        // Opret en ny HTML-streng for kommentaren
+        const commentHtml = `
+            <div class="comment">
+                <span class="comment-username">${newComment.username}</span>
+                <span class="comment-timestamp">${new Date(newComment.timestamp).toLocaleString()}</span>
+                <p class="comment-text">${newComment.comment}</p>
+            </div>
+        `;
+
+        // Tilføj den nye kommentar til containeren
+        commentsContainer.innerHTML += commentHtml;
+    }
+});
+
+
+// Kald funktionen når siden indlæses
+window.onload = fetchAndDisplayNotes;

@@ -2,8 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { getComments, addComment } = require('../database/comments');
 const { encrypt, decrypt } = require('../utils/encryption'); // Antager, at du har separeret krypteringslogikken til en utils-mappe
-const { removeAllComments } = require('../database/remove_comments');
-const secretKey = process.env.SECRET_KEY;
+
 
 // POST Endpoint til at oprette en kommentar
 router.post('/', async (req, res) => {
