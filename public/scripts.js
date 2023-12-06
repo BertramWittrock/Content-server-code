@@ -22,10 +22,16 @@ function onNoteClick(noteId) {
 }
 
 // Event listener til hele dokumentet for at fjerne aktive notes
-document.addEventListener('click', (event) => {
+document.addEventListener('click', async (event) => {
     if (!event.target.closest('.sticky-note')) {
         removeActiveNotes();
+        const notes = document.querySelectorAll('.sticky-note');
+        for (const note of notes) {
+            const noteId = note.id.split('-')[1];
+            await fetchAndDisplayFirstComment(noteId);
+        }
     }
+    
 });
 
 // Opdatering af fetchAndDisplayNotes for at tilføje event listeners
