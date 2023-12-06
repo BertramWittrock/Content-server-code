@@ -17,6 +17,7 @@ function onNoteClick(noteId) {
     const activeNote = document.getElementById(`note-${noteId}`);
     if (activeNote) {
         activeNote.classList.add('active-note');
+        fetchAndDisplayAllComments(noteId); // Hent og vis alle kommentarer for den aktive note
     }
 }
 
@@ -50,7 +51,8 @@ async function fetchAndDisplayNotes() {
             note.addEventListener('click', () => onNoteClick(noteId));
 
             // Hent kommentarer for denne note
-            await fetchAndDisplayComments(noteId);
+            console.log("henter kommentarer")
+            await fetchAndDisplayFirstComment(noteId);
         });
     } catch (error) {
         console.error('Fejl ved indlæsning af notes:', error);
@@ -58,13 +60,60 @@ async function fetchAndDisplayNotes() {
 }
 
 
-// Funktion til at hente og vise kommentarer for en specifik note
-async function fetchAndDisplayComments(noteId) {
+// // Funktion til at hente og vise kommentarer for en specifik note
+// async function fetchAndDisplayComments(noteId) {
+//     try {
+//         const commentsResponse = await fetch(`/comments/${noteId}`);
+//         const comments = await commentsResponse.json();
+//         const commentsContainer = document.getElementById(`comments-container-${noteId}`);
+
+//         comments.forEach(comment => {
+//             const commentHtml = `
+//                 <div class="comment">
+//                     <span class="comment-username">${comment.username}</span>
+//                     <span class="comment-timestamp">${new Date(comment.timestamp).toLocaleString()}</span>
+//                     <p class="comment-text">${comment.comment}</p>
+//                 </div>
+//             `;
+//             commentsContainer.innerHTML += commentHtml;
+//         });
+//     } catch (error) {
+//         console.error(`Fejl ved indlæsning af kommentarer for note ${noteId}:`, error);
+//     }
+// }
+
+// Funktion til at hente og vise den første kommentar for en specifik note
+async function fetchAndDisplayFirstComment(noteId) {
     try {
         const commentsResponse = await fetch(`/comments/${noteId}`);
         const comments = await commentsResponse.json();
         const commentsContainer = document.getElementById(`comments-container-${noteId}`);
 
+        // Tjek om der er kommentarer, og vis kun den første
+        if (comments.length > 0) {
+            const firstComment = comments[0];
+            const commentHtml = `
+                <div class="comment">
+                    <span class="comment-username">${firstComment.username}</span>
+                    <span class="comment-timestamp">${new Date(firstComment.timestamp).toLocaleString()}</span>
+                    <p class="comment-text">${firstComment.comment}</p>
+                </div>
+            `;
+            commentsContainer.innerHTML = commentHtml; // Vis kun den første kommentar
+        }
+    } catch (error) {
+        console.error(`Fejl ved indlæsning af kommentarer for note ${noteId}:`, error);
+    }
+}
+
+// Funktion til at hente og vise alle kommentarer for en specifik note
+async function fetchAndDisplayAllComments(noteId) {
+    try {
+        const commentsResponse = await fetch(`/comments/${noteId}`);
+        const comments = await commentsResponse.json();
+        const commentsContainer = document.getElementById(`comments-container-${noteId}`);
+
+        commentsContainer.innerHTML = ''; // Ryd tidligere kommentarer
         comments.forEach(comment => {
             const commentHtml = `
                 <div class="comment">
@@ -79,6 +128,7 @@ async function fetchAndDisplayComments(noteId) {
         console.error(`Fejl ved indlæsning af kommentarer for note ${noteId}:`, error);
     }
 }
+
 
 // Send reaktion til serveren
 function sendReaction(reactionType, noteId) {

@@ -14,7 +14,7 @@ function generateNoteHTML(note) {
         <button onclick="sendReaction(3, ${note.id})"> :| (${note.reaction3})</button>
         <button onclick="sendReaction(4, ${note.id})"> :( (${note.reaction4})</button>
       </div>
-      <div class="comments-container">
+      <div class="comments-container" id="comments-container-${note.id}">
         <!-- Kommentarer vil blive indlæst og vist her -->
       </div>
       <div class="comment-input">
