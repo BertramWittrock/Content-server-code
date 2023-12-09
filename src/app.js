@@ -9,11 +9,15 @@ app.use(express.static('public'));
 app.use(helmet({
     contentSecurityPolicy: {
       directives: {
-        defaultSrc: ["'self'"],
-        connectSrc: ["'self'", "wss://eu.joeandthejuice.digital"],
-        // ... other directives as needed ...
-      },
-    },
+        defaultSrc: ["'self'"], // Only allow scripts from the same origin
+        scriptSrc: ["'self'", "'unsafe-inline'"], // Allow scripts from the same origin and inline scripts
+        styleSrc: ["'self'", 'https://fonts.googleapis.com'], // Allow styles from the same origin and Google Fonts
+        fontSrc: ["'self'", 'https://fonts.gstatic.com'], // Allow fonts from the same origin and Google Fonts
+        imgSrc: ["'self'", 'data:'], // Allow images from the same origin and data URLs
+        connectSrc: ["'self'", "wss://eu.joeandthejuice.digital"], // Allow connections to the same origin and your WebSocket server
+        // Add other resource directives as needed
+      }
+    }
   }));
 app.use('/sticky-notes', notesRoutes);
 app.use('/comments', commentsRoutes);
