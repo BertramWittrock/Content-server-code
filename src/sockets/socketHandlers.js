@@ -7,7 +7,7 @@ const secretKey = process.env.SECRET_KEY
 function createSocketServer(server) {
   const io = new Server(server, {
     cors: {
-      origin: "https://joeandthejuice.digital",
+      origin: '*',
       methods: ["GET", "POST"]
     }
   });
