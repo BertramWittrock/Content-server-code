@@ -5,7 +5,12 @@ const { encrypt, decrypt } = require('../utils/encryption'); // Antager, at du h
 const secretKey = process.env.SECRET_KEY
 
 function createSocketServer(server) {
-  const io = new Server(server);
+  const io = new Server(server, {
+    cors: {
+      origin: "https://joeandthejuice.digital",
+      methods: ["GET", "POST"]
+    }
+  });
 
   io.on('connection', (socket) => {
     console.log('En bruger er forbundet - socket');
