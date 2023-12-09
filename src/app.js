@@ -4,7 +4,12 @@ const commentsRoutes = require('./routes/commentsRoutes');
 const app = express();
 app.use(express.json());
 app.use(express.static('public'));
-
+app.use(helmet.contentSecurityPolicy({
+    directives: {
+      defaultSrc: ["'self'"],
+      connectSrc: ["'self'", "wss://eu.joeandthejuice.digital"]
+    }
+  }));
 app.use('/sticky-notes', notesRoutes);
 app.use('/comments', commentsRoutes);
 
