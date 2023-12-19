@@ -3,9 +3,17 @@ const notesRoutes = require('./routes/notesRoutes');
 const commentsRoutes = require('./routes/commentsRoutes');
 const app = express();
 const auth = require('./middleware/auth')
+const cors = require('cors');
 const helmet = require('helmet');
 app.use(express.json());
 app.use(express.static('public'));
+app.use(cors(corsOptions));
+
+const corsOptions = {
+  origin: '*',
+  optionsSuccessStatus: 200
+}
+
 app.use(helmet({
     contentSecurityPolicy: {
       directives: {
