@@ -17,7 +17,7 @@ async function auth(req, res, next) {
             return res.status(401).send('Bearer token not provided');
         }
 
-        const url = `http://207.154.248.204/accessToken/${token}`;
+        const url = `https://api.joeandthejuice.digital/accessToken/${token}`;
         console.log(token); // This will now log just the token without 'Bearer'
 
         const response = await fetchWithImport(url);
