@@ -29,7 +29,7 @@ app.use(
     },
   })
 );
-app.use("/sticky-notes", notesRoutes);
-app.use("/comments", commentsRoutes);
+app.use("/sticky-notes", auth, notesRoutes);
+app.use("/comments", auth, commentsRoutes);
 
 module.exports = app;
