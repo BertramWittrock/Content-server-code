@@ -68,29 +68,6 @@ async function fetchAndDisplayNotes() {
     }
 }
 
-
-// // Funktion til at hente og vise kommentarer for en specifik note
-// async function fetchAndDisplayComments(noteId) {
-//     try {
-//         const commentsResponse = await fetch(`https://eu.joeandthejuice.digital/comments/${noteId}`);
-//         const comments = await commentsResponse.json();
-//         const commentsContainer = document.getElementById(`comments-container-${noteId}`);
-
-//         comments.forEach(comment => {
-//             const commentHtml = `
-//                 <div class="comment">
-//                     <span class="comment-username">${comment.username}</span>
-//                     <span class="comment-timestamp">${new Date(comment.timestamp).toLocaleString()}</span>
-//                     <p class="comment-text">${comment.comment}</p>
-//                 </div>
-//             `;
-//             commentsContainer.innerHTML += commentHtml;
-//         });
-//     } catch (error) {
-//         console.error(`Fejl ved indlæsning af kommentarer for note ${noteId}:`, error);
-//     }
-// }
-
 // Funktion til at hente og vise den første kommentar for en specifik note
 async function fetchAndDisplayFirstComment(noteId) {
     try {
