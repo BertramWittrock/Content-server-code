@@ -3,7 +3,32 @@
 const area = localStorage.getItem('area');
 const socket = io(`https://${area}.joeandthejuice.digital`) // Opretter forbindelse til din server');
 
+async function postNote() {
+    const noteInput = document.getElementById('noteInput');
+    const noteText = noteInput.value;
+    const username = localStorage.getItem('username'); // Brugernavn hentet fra lokal opbevaring eller en anden kilde
 
+    if (noteText) {
+        try {
+            const response = await fetch('/sticky-notes', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ username, text: noteText })
+            });
+
+            if (response.ok) {
+                noteInput.value = ''; // Ryd inputfeltet
+                fetchAndDisplayNotes(); // Opdater notes visning
+            } else {
+                console.error('Fejl under oprettelse af note');
+            }
+        } catch (error) {
+            console.error('Fejl:', error);
+        }
+    }
+}
 
 // Funktion til at fjerne aktiv klasse fra alle notes
 function removeActiveNotes() {

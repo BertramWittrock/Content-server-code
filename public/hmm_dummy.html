@@ -7,6 +7,11 @@
     <script src="https://eu.joeandthejuice.digital/socket.io/socket.io.js"></script>
 </head>
 <body>
+    <div class="note-creation">
+        <input type="text" id="noteInput" placeholder="Skriv en note her..." />
+        <button id="input-btn" onclick="postNote()">Post Note</button>
+    </div>
+
     <div id="notesContainer"> <!-- Container til sticky notes -->
         <!-- Sticky notes vil blive indlæst her -->
     </div>
