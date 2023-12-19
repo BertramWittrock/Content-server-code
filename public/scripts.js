@@ -39,7 +39,7 @@ document.addEventListener('click', async (event) => {
 // Opdatering af fetchAndDisplayNotes for at tilføje event listeners
 async function fetchAndDisplayNotes() {
     try {
-        const response = await fetch('/sticky-notes'); // Angiv den korrekte sti til din GET endpoint
+        const response = await fetch('https://eu.joeandthejuice.digital/sticky-notes'); // Angiv den korrekte sti til din GET endpoint
         const notesHTML = await response.text();
 
         // Opdater HTML indholdet i notesContainer
@@ -71,7 +71,7 @@ async function fetchAndDisplayNotes() {
 // // Funktion til at hente og vise kommentarer for en specifik note
 // async function fetchAndDisplayComments(noteId) {
 //     try {
-//         const commentsResponse = await fetch(`/comments/${noteId}`);
+//         const commentsResponse = await fetch(`https://eu.joeandthejuice.digital/comments/${noteId}`);
 //         const comments = await commentsResponse.json();
 //         const commentsContainer = document.getElementById(`comments-container-${noteId}`);
 
@@ -93,7 +93,7 @@ async function fetchAndDisplayNotes() {
 // Funktion til at hente og vise den første kommentar for en specifik note
 async function fetchAndDisplayFirstComment(noteId) {
     try {
-        const commentsResponse = await fetch(`/comments/${noteId}`);
+        const commentsResponse = await fetch(`https://eu.joeandthejuice.digital/comments/${noteId}`);
         const comments = await commentsResponse.json();
         const commentsContainer = document.getElementById(`comments-container-${noteId}`);
 
@@ -117,7 +117,7 @@ async function fetchAndDisplayFirstComment(noteId) {
 // Funktion til at hente og vise alle kommentarer for en specifik note
 async function fetchAndDisplayAllComments(noteId) {
     try {
-        const commentsResponse = await fetch(`/comments/${noteId}`);
+        const commentsResponse = await fetch(`https://eu.joeandthejuice.digital/comments/${noteId}`);
         const comments = await commentsResponse.json();
         const commentsContainer = document.getElementById(`comments-container-${noteId}`);
 
