@@ -149,7 +149,7 @@ function sendReaction(reactionType, noteId) {
 function sendComment(noteId) {
     const commentInput = document.getElementById(`comment-input-${noteId}`);
     const comment = commentInput.value;
-    const username = 'BrugerNavn'; // Erstat med faktisk brugernavn
+    const username = localStorage.getItem('username'); // Erstat med faktisk brugernavn
 
     if (comment) {
         console.log("commentsent")
