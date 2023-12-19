@@ -1,6 +1,7 @@
 // Opretter forbindelse til Socket.IO-serveren
 // const socket = io(); // Opretter forbindelse til din server
-const socket = io('https://eu.joeandthejuice.digital') // Opretter forbindelse til din server');
+const area = localStorage.getItem('area');
+const socket = io(`https://${area}.joeandthejuice.digital`) // Opretter forbindelse til din server');
 
 
 
