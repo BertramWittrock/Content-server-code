@@ -10,7 +10,7 @@ async function getComments(noteId) {
     console.error('Fejl ved hentning af kommentarer:', error.message);
     throw error;
   } finally {
-    db.close(); // Husk at lukke databasen
+    db.close(); 
   }
 }
 

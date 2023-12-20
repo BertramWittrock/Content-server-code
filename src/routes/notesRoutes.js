@@ -1,23 +1,23 @@
 const express = require('express');
 const router = express.Router();
-const { createNote, getNotes, updateReactions } = require('../database/notes'); // Opdateret import
+const { createNote, getNotes, updateReactions } = require('../database/notes'); 
 const { generateNoteHTML } = require('../utils/helpers'); 
 
-// POST Endpoint til at oprette en Sticky Note
+// POST Endpoint to create sticky note
 router.post('/', async (req, res) => {
   try {
     const { username, text } = req.body;
-    await createNote(username, text); // Opdateret til at bruge funktionen direkte
+    await createNote(username, text); 
     res.status(201).send({ message: 'Sticky note oprettet!' });
   } catch (error) {
     res.status(500).send({ error: error.message });
   }
 });
 
-// GET Endpoint til at hente Sticky Notes
+// GET Endpoint to get sticky notes
 router.get('/', async (req, res) => {
   try {
-    const notes = await getNotes(); // Opdateret til at bruge funktionen direkte
+    const notes = await getNotes(); 
     
     // Convert notes to HTML here
     const notesHTML = notes.map(note => generateNoteHTML(note)).join('');
@@ -28,12 +28,12 @@ router.get('/', async (req, res) => {
   }
 });
 
-// PUT Endpoint til at opdatere reaktioner på en note
+// PUT Endpoint to update reactions on a stickynote
 router.put('/:noteId/reactions', async (req, res) => {
   try {
     const noteId = req.params.noteId;
     const { reactionType } = req.body;
-    const updatedNote = await updateReactions(noteId, reactionType); // Opdateret til at bruge funktionen direkte
+    const updatedNote = await updateReactions(noteId, reactionType); 
     res.status(200).json(updatedNote);
   } catch (error) {
     res.status(500).send({ error: error.message });
