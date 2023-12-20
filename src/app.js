@@ -28,7 +28,7 @@ app.use(
       },
     },
   })
-);
+);  
 app.use("/sticky-notes", auth, notesRoutes);
 app.use("/comments", auth, commentsRoutes);
 
