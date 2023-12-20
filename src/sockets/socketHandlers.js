@@ -2,7 +2,6 @@ const { Server } = require('socket.io');
 const { updateReactions } = require('../database/notes');
 const { addComment } = require('../database/comments');
 const { encrypt, decrypt } = require('../utils/encryption'); 
-const secretKey = process.env.SECRET_KEY
 
 function createSocketServer(server) {
   const io = new Server(server, {
