@@ -6,6 +6,7 @@ const server = http.createServer(app);
 createSocketServer(server);
 
 const port = 3000
+
 server.listen(port, () => {
   console.log(`Serveren er startet på port ${port}`);
 });
