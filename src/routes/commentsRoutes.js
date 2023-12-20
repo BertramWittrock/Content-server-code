@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const { getComments, addComment } = require('../database/comments');
-const { encrypt, decrypt } = require('../utils/encryption'); // Antager, at du har separeret krypteringslogikken til en utils-mappe
+const { encrypt, decrypt } = require('../utils/encryption');
 
 
-// POST Endpoint til at oprette en kommentar
+// POST Endpoint to create a comment.
 router.post('/', async (req, res) => {
   const { noteId, username, comment } = req.body;
   const encryptedComment = encrypt(comment);
@@ -22,7 +22,7 @@ router.post('/', async (req, res) => {
   }
 });
 
-// GET Endpoint til at hente kommentarer for en sticky note
+// GET Endpoint to get comments from a stickynote
 router.get('/:noteId', async (req, res) => {
   const noteId = req.params.noteId;
   

@@ -1,7 +1,7 @@
 const { Server } = require('socket.io');
 const { updateReactions } = require('../database/notes');
 const { addComment } = require('../database/comments');
-const { encrypt, decrypt } = require('../utils/encryption'); // Antager, at du har en separat encrypt modul
+const { encrypt, decrypt } = require('../utils/encryption'); 
 const secretKey = process.env.SECRET_KEY
 
 function createSocketServer(server) {
@@ -15,12 +15,11 @@ function createSocketServer(server) {
   io.on('connection', (socket) => {
     console.log('En bruger er forbundet - socket');
 
-    // Håndter 'postReaction' event
+    // Handles "post reaction" event
     socket.on('postReaction', async (data) => {
       try {
         const { noteId, reactionType } = data;
-
-        // Valider reactionType
+        //validate reactionType
         const validReactions = ['reaction1', 'reaction2', 'reaction3', 'reaction4'];
         if (!validReactions.includes(reactionType)) {
           throw new Error('Ugyldig reaktionstype');
@@ -32,8 +31,7 @@ function createSocketServer(server) {
         console.error('Fejl under håndtering af postReaction:', error);
       }
     });
-
-    // Håndter 'postComment' event
+    // Handle 'postCommenct' event
     socket.on('postComment', async (data) => {
       console.log("modtaget kommentar")
       try {

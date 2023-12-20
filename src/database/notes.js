@@ -1,4 +1,4 @@
-// Importer databaseforbindelsesfunktionen
+
 const { connectToDatabase } = require('./db');
 
 async function createNote(username, text) {
