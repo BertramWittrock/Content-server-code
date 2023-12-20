@@ -1,0 +1,10 @@
+config:
+  target: 'https://asia.joeandthejuice.digital'
+  phases:
+    - duration: 60 # Test duration in seconds
+      arrivalRate: 1000 # Number of new virtual users per second
+
+scenarios:
+  - flow:
+      - get:
+          url: "/"
