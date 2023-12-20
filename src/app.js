@@ -23,12 +23,18 @@ app.use(
         styleSrc: ["'self'", "https://fonts.googleapis.com"], // Allow styles from the same origin and Google Fonts
         fontSrc: ["'self'", "https://fonts.gstatic.com"], // Allow fonts from the same origin and Google Fonts
         imgSrc: ["'self'", "data:"], // Allow images from the same origin and data URLs
-        connectSrc: ["'self'", ["wss://eu.joeandthejuice.digital", "wss://us.joeandthejuice.digital", "wss://asia.joeandthejuice.digital"]], // Allow connections to the same origin and your WebSocket server
+        connectSrc: [
+          "'self'",
+          "wss://eu.joeandthejuice.digital",
+          "wss://us.joeandthejuice.digital",
+          "wss://asia.joeandthejuice.digital"
+        ], // Allow connections to the same origin and your WebSocket server
         // Add other resource directives as needed
       },
     },
   })
-);  
+);
+
 app.use("/sticky-notes", auth, notesRoutes);
 app.use("/comments", auth, commentsRoutes);
 app.get("/", (req, res) => {
