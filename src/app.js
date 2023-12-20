@@ -31,5 +31,8 @@ app.use(
 );  
 app.use("/sticky-notes", auth, notesRoutes);
 app.use("/comments", auth, commentsRoutes);
+app.get("/spam", (req, res) => {
+  res.send("spam attack!");
+});
 
 module.exports = app;
