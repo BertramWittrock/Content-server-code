@@ -1,10 +1,10 @@
 const crypto = require('crypto');
-require('dotenv').config(); // Dette indlæser miljøvariabler fra .env-filen
+require('dotenv').config(); 
 
-// Angiv din hemmelige nøgle og algoritme
+
 const algorithm = 'aes-256-cbc';
 const secretKey = process.env.SECRET_KEY
-//  || 'dinhemmeligenøgleher'; // Anvend miljøvariabel eller fallback
+
 
 function encrypt(text) {
     const iv = crypto.randomBytes(16);
